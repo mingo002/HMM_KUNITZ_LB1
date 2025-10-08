@@ -20,7 +20,13 @@ the dataset was stored in a custom report including the following information ab
   -Structure Data: PDB ID, Data Collection Resolution
   -Polymer Entity Data: Sequence, Auth Asym ID, Annotation Identifier,Entity ID
   
-the custom report was converted in fasta format u
+the custom report was converted in fasta format using the csv2fasta.sh script
+
+Using Cd-hit - a tool for ***clustering*** and filtering sequences based on sequence identity - with the standard threshold (sequence identity = 90%) allowed the identification of the set of proteins (N = 25) on which to perform the multiple structural alignment while avoiding redundancy. The clustering was performed running the following command:
+
+cd-hit -i pdb_kunitz.fasta -o pdb_kunitz_cluster.txt
+this command will generate two files: 
+
 
   
   
