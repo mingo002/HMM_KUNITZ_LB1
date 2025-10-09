@@ -26,7 +26,7 @@ Using Cd-hit - a tool for ***clustering*** and filtering sequences based on sequ
 
 cd-hit -i pdb_kunitz.fasta -o pdb_kunitz_cluster.txt
 this command will generate two files: 
-
+a cluster info 
 
   
   
