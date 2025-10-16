@@ -1,7 +1,7 @@
 from Bio import SeqIO
 
 # Parameters
-input = "pdb_kunitz_clustered.clstr"
+input = "kunitz_cluster.txt"
 output = "filtered_kunitz.fasta"
 bin_seq = "filtered_out.txt"
 

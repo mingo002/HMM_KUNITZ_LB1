@@ -1,26 +1,2 @@
-#!/usr/bin/env bash
-    
-    INPUT="rcsb_pdb_custom_report_kunitz.csv"
-    OUT="pdb_kunitz_customreported.fasta"
-    
-    tail -n +2 "$INPUT" | tr -d '"' \
-    | awk -F ',' '
-        $7 ~ /PF00014/ {
-            id = $NF   # Always get the last column (Entry Id)
-            seq = $4   # Sequence
-    
-            if (id == "" || seq == "") next  # skip if missing
-    
-            print ">" id
-            for (i=1; i<=length(seq); i+=80)
-                print substr(seq,i,80)
-        }' > "$OUT"
-    
-
-echo "rote FASTA to $OUT successfully!"
-
-
-
-
-
-
+tr -d '"' < rcsb_pdb_custom_report_kunitz.csv | \
+awk -F ',' '{if (length($2)>0) {name=$2}; if (length($5)>0) {chain=$5}; if (length($4)>0) {seq=$4}; if ($6 ~ /PF00014/ && length(seq)>0) print ">"name"_"chain"\n"seq}' > kunitz_sequences.fasta
