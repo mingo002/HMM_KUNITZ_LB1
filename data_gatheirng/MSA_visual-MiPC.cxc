@@ -1,0 +1,80 @@
+# === KUNITZ STRUCTURAL ALIGNMENT VISUALIZATION ===
+open 1BUN
+open 1DTX
+open 1F5R
+open 1FAK
+open 1KNT
+open 1YC0
+open 1YLD
+open 1ZR0
+open 3BYB
+open 3M7Q
+open 3WNY
+open 4DTG
+open 4NTW
+open 4U30
+open 4U32
+open 5JB7
+open 5M4V
+open 5NX1
+open 5YV7
+open 6BX8
+open 6Q61
+open 6YHY
+
+hide atoms
+show cartoons
+
+select #1/B #2/A #3/I #4/I #5/A #6/I #7/B #8/B #9/A #10/B #11/A #12/K #13/B #14/X #15/X #16/A #17/A #18/C #19/A #20/B #21/A #22/A
+select ~sel & ##selected
+delete sel
+
+
+
+# === Coloring scheme (no pink/purple) ===
+color #1 cornflowerblue
+color #2 forestgreen
+color #3 goldenrod
+color #4 steelblue
+color #5 firebrick
+color #6 limegreen
+color #7 darkorange
+color #8 navy
+color #9 olive
+color #10 sienna
+color #11 teal
+color #12 chocolate
+color #13 cadetblue
+color #14 darkred
+color #15 darkkhaki
+color #16 seagreen
+color #17 royalblue
+color #18 darkgoldenrod
+color #19 mediumseagreen
+color #20 indianred
+color #21 peru
+color #22 slategray
+
+# === Highlight conserved cysteines (disulfide bonds) ===
+select :CYS
+color sel yellow
+style sel stick
+~select
+
+# === Highlight reactive loop (adjust residue numbers as needed) ===
+# Assuming typical Kunitz residues 14–20 (change if needed)
+select :14-20
+color sel red
+style sel stick
+~select
+
+# === General rendering ===
+set bgColor white
+lighting soft
+# set shadows true
+
+# === Orientation and cleanup ===
+view orient
+view
+
+

@@ -1,0 +1,49 @@
+# === KUNITZ STRUCTURAL ALIGNMENT VISUALIZATION ===
+# === Coloring scheme (no pink/purple) ===
+color #1 cornflowerblue
+color #2 forestgreen
+color #3 goldenrod
+color #4 steelblue
+color #5 firebrick
+color #6 limegreen
+color #7 darkorange
+color #8 navy
+color #9 olive
+color #10 sienna
+color #11 teal
+color #12 chocolate
+color #13 cadetblue
+color #14 darkred
+color #15 darkkhaki
+color #16 seagreen
+color #17 royalblue
+color #18 darkgoldenrod
+color #19 mediumseagreen
+color #20 indianred
+color #21 peru
+color #22 slategray
+
+# === Highlight conserved cysteines (disulfide bonds) ===
+select :CYS
+color sel yellow
+style sel stick
+~select
+
+# === Highlight reactive loop (adjust residue numbers as needed) ===
+# Assuming typical Kunitz residues 14–20 (change if needed)
+select :14-20
+color sel red
+style sel stick
+~select
+
+# === General rendering ===
+set bgColor white
+lighting soft
+# set shadows true
+
+# === Orientation and cleanup ===
+view orient
+view
+
+# === Export ===
+save ~/kunitz_structural_alignment.png width 2000 height 1500 supersample 3
