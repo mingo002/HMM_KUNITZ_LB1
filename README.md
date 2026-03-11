@@ -194,10 +194,10 @@ awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper
       comm -23 <(sort neg_set_1.txt) <(cut -f 1 neg_2_strali.class | sort) | awk '{print $1"\t"0"\t"10.0"\t"10.0}' >> neg_2_strali.class
   ``` 
 ### 8. Combine Positive and Negative Results
-      Purpose: Prepare final datasets for downstream analysis.
-      How:
-      Concatenates positive and negative .class files to create set_1_strali.class and set_2_strali.class.
-      Combines both sets into all_strali.class.
+  Purpose: Prepare final datasets for downstream analysis.
+  How:
+  Concatenates positive and negative .class files to create set_1_strali.class and set_2_strali.class.
+  Combines both sets into all_strali.class.
 
   ```bash
       cat pos_1_strali.class neg_1_strali.class > set_1_strali.class
