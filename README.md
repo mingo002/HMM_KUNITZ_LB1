@@ -210,3 +210,4 @@ performace.py has been run in performance_eval.sh which is filtering the output 
 
 
 ## Visualization
+Multiple Sequence Alignemnt was visualized with Aliview, then it was used for viusualization of 22 protein structures superimposed using ChimeraX. Pictures of both alignments are available in the folder above.
