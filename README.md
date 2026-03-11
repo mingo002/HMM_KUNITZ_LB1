@@ -26,7 +26,9 @@ the output fasta file is kunits_sequencs.fasta containing PDBID_chain and the se
 
 Using Cd-hit - a tool for ***clustering*** and filtering sequences based on sequence identity - with the standard threshold (sequence identity = 90%) allowed the identification of the set of proteins (N = 25) on which to perform the multiple structural alignment while avoiding redundancy. The clustering was performed running the following command:
 
+'''bash
 cd-hit -i kunitz_sequences.fasta -o pdb_kunitz_cluster.txt
+
 this command will generate two files: 
 - kunitz_cluster_info.clstr -->  is a cluster report containing for each sequence:
 
@@ -51,6 +53,7 @@ Another entry was manually removed (4BQD:A) because its A chain lacks one or bot
 After collecting a cleaned set of clustered sequences, MSA was calculated using PDBeFold tool.
 the input file needed for this MSA should contain just the PDB ids, to do so, a new file containing just the ids of the clusterd squences was generated with this command:
 
+'''bash
 grep '^>' filtered_kunitz.fasta | sed 's/^>//' | sed 's/_/:/'  > filtered_ids.txt
 
 the output file will contain PDBID:chain
@@ -60,14 +63,15 @@ Then to perform the alignment the option *multiple* and *List of PDB codes* were
 OUTPUTS
  MSA_22.fasta --> a FASTA file containing all the 22 superimposed sequences
 
-
 The MSA output file was cleaned: all the residues were converted into uppercase characters, the 'PDB' prefix was removed, and the output file clean_MSA_22.fasta was re-printed without adding a trailing newline
 
+'''bash
 awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper($1)}}' MSA_22.fasta | sed s/PDB://| tail -n +2 > clean_MSA_22.fasta
  
 ## HMM Building
   profile HMM construction from multiple structural alignments
 
+  '''bash
   hmmbuild pdb_kunitz.hmm clean_MSA_22.fasta
 
 ## Validation set creation
@@ -77,9 +81,11 @@ awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper
   the output was exported in all_kuntiz.fasta
 
   Create a blast database with the kunitz proteins from SwissProt
+  '''bash
   makeblastdb -in all_kunitz.fasta -input_type fasta -dbtype prot -out all_kunitz.fasta
 
   Perform BLAST search on the 22 representative sequences against the whole kunitz dataset
+  '''bash
   blastp -query clean_MSA_22.fasta -db all_kunitz.fasta -out bpti_kunitz_clean.blast -outfmt 7
 
   
@@ -96,6 +102,7 @@ awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper
           Extract the second column (subject ID), sort uniquely, and extract the Uniprot ID.
           Save these IDs to ids_to_remove.txt.
       
+      '''bash
       grep -v "^#" bpti_kunitz_clean.blast | awk '{if ($3>=95 && $4>=50) print $2}' | sort -u | cut -d "|" -f 2 > ids_to_remove.txt
 
   ### 2. Extract All Kunitz IDs
@@ -104,6 +111,7 @@ awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper
               Search for header lines in all_kunitz.fasta.
               Extract the Uniprot ID from each header.
               Save to all_kunitz_ids.txt.
+      '''bash
       grep ">" all_kunitz.fasta | cut -d "|" -f 2 > all_kunitz_ids.txt
   
   ### 3. Create Positive Test Sets
@@ -116,6 +124,7 @@ awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper
 
       Download the whole Swissprot database from Uniprot website and export it in uniprot_sprot.fasta
 
+      '''bash
       comm -23 <(sort all_kunitz_ids.txt) <(sort ids_to_remove.txt) > ids_to_keep.txt
       sort -R ids_to_keep.txt > kunitz_shuffled.txt
 
@@ -135,6 +144,7 @@ awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper
       Split into two sets: first 286,286 IDs (neg_set_1.txt), last 286,286 IDs (neg_set_2.txt).
       Extract corresponding sequences from SwissProt using get_seq.py, saving to neg_1.fasta and neg_2.fasta.
   
+      '''bash
       grep ">" uniprot_sprot.fasta | cut -d "|" -f 2 > all_sp_ids.txt
       comm -23 <(sort all_sp_ids.txt) <(sort all_kunitz_ids.txt) > negative_ids.txt
       sort -R negative_ids.txt > negative_shuffled.txt
@@ -147,6 +157,7 @@ awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper
       How:
       Runs hmmsearch with the pdb_kunitz.hmm model on each of the four FASTA files (pos_1.fasta, pos_2.fasta, neg_1.fasta, neg_2.fasta).
       Outputs tabular results to .out files (e.g., pos_1_strali.out).
+      '''bash
       hmmsearch -Z 1000 --max --tblout pos_1_strali.out pdb_kunitz.hmm pos_1.fasta
       hmmsearch -Z 1000 --max --tblout pos_2_strali.out pdb_kunitz.hmm pos_2.fasta
       hmmsearch -Z 1000 --max --tblout neg_1_strali.out pdb_kunitz.hmm neg_1.fasta
@@ -160,6 +171,7 @@ awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper
       Extract the full sequence E-value ($5) and best domain E-value ($8).
       Write to .class files (e.g., pos_1_strali.class).
 
+      '''bash
       grep -v "^#" pos_1_strali.out | awk '{split($1,a,"|"); print a[2]"\t"1"\t"$5"\t"$8}' > pos_1_strali.class
       grep -v "^#" pos_2_strali.out | awk '{split($1,a,"|"); print a[2]"\t"1"\t"$5"\t"$8}' > pos_2_strali.class
       grep -v "^#" neg_1_strali.out | awk '{split($1,a,"|"); print a[2]"\t"0"\t"$5"\t"$8}' > neg_1_strali.class
@@ -170,6 +182,7 @@ awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper
       Finds negative IDs in neg_set_1.txt and neg_set_2.txt that are missing from the corresponding .class files.
       Adds them to the .class files with a fake high E-value (10.0), indicating no detection.
 
+      '''bash
       comm -23 <(sort neg_set_1.txt) <(cut -f 1 neg_1_strali.class | sort) | awk '{print $1"\t"0"\t"10.0"\t"10.0}' >> neg_1_strali.class
       comm -23 <(sort neg_set_1.txt) <(cut -f 1 neg_2_strali.class | sort) | awk '{print $1"\t"0"\t"10.0"\t"10.0}' >> neg_2_strali.class
 ### 8. Combine Positive and Negative Results
@@ -178,6 +191,7 @@ awk '{if (substr($1,1,1)==">") {print "\n"toupper($1)} else {printf "%s" toupper
       Concatenates positive and negative .class files to create set_1_strali.class and set_2_strali.class.
       Combines both sets into all_strali.class.
 
+      '''bash
       cat pos_1_strali.class neg_1_strali.class > set_1_strali.class
       cat pos_2_strali.class neg_2_strali.class > set_2_strali.class
       cat set_1_strali.class set_2_strali.class > all_strali.class
@@ -210,4 +224,4 @@ performace.py has been run in performance_eval.sh which is filtering the output 
 
 
 ## Visualization
-Multiple Sequence Alignemnt was visualized with Aliview, then it was used for viusualization of 22 protein structures superimposed using ChimeraX. Pictures of both alignments are available in the folder above.
+Multiple Sequence Alignemnt was visualized with Aliview, then it was used for viusualization of 22 protein structures superimposed using ChimeraX. Pictures of both alignments are available in the folder above, it also include MCCvsThreshold graph for both full sequence and best domain
